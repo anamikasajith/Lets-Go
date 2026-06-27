@@ -1,0 +1,246 @@
+/* Base Reset & Variables */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    /* Subtle dark overlay so the white cards stay readable against the image */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                      url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    
+    color: #0f172a;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Premium Glassy Header */
+.app-header {
+    background: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    padding: 20px 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 22px; 
+    font-weight: 800;
+    color: #ffffff; /* White logo to pop against the background */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Main Layout Grid */
+.main-layout {
+    display: grid;
+    grid-template-columns: 350px 1fr; /* Form is 350px, Results take the rest */
+    gap: 30px;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    width: 100%;
+}
+
+/* Frosted Glass Cards */
+.card {
+    background: rgba(255, 255, 255, 0.85); /* 85% opacity */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px; 
+    padding: 35px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.card h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: #0f172a;
+}
+
+.subtitle {
+    color: #475569;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+/* --- NEW: Tab Navigation Styles --- */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    background: rgba(255, 255, 255, 0.4);
+    padding: 6px;
+    border-radius: 12px;
+}
+
+.tab-btn {
+    flex: 1;
+    margin-top: 0;
+    padding: 10px;
+    background: transparent;
+    color: #475569;
+    box-shadow: none;
+    font-size: 14px;
+}
+
+.tab-btn:hover {
+    transform: none;
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: none;
+    color: #0f172a;
+}
+
+.tab-btn.active {
+    background: white;
+    color: #2563eb;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* Form Styles */
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+/* Softer Input Fields */
+input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid rgba(203, 213, 225, 0.8);
+    border-radius: 12px;
+    font-size: 15px;
+    color: #1e293b;
+    background: rgba(255, 255, 255, 0.6); 
+    transition: all 0.2s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+/* Premium Gradient Button */
+button {
+    width: 100%;
+    padding: 16px; 
+    margin-top: 15px;
+    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); 
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+    background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
+}
+
+button:disabled {
+    background: #94a3b8;
+    box-shadow: none;
+    transform: none;
+    cursor: not-allowed;
+}
+
+/* Result Section Styling */
+.result-card {
+    min-height: 500px;
+    height: 100%;
+    max-height: 700px;
+    overflow-y: auto; 
+}
+
+.empty-state, .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 400px;
+    color: #64748b;
+    text-align: center;
+}
+
+.empty-state i, .loading-state i {
+    font-size: 60px;
+    margin-bottom: 15px;
+    color: #94a3b8;
+}
+
+.empty-state h3 {
+    color: #334155;
+    margin-bottom: 10px;
+}
+
+/* Beautiful Markdown Styling */
+.markdown-body {
+    color: #334155;
+}
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+    color: #0f172a;
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+.markdown-body p {
+    margin-bottom: 16px;
+    line-height: 1.7;
+}
+
+.markdown-body ul, .markdown-body ol {
+    margin-left: 20px;
+    margin-bottom: 16px;
+}
+
+.markdown-body li {
+    margin-bottom: 8px;
+}
+
+.markdown-body strong {
+    color: #1e293b;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 800px) {
+    .main-layout {
+        grid-template-columns: 1fr; 
+    }
+}

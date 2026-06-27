@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelMate AI</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons and Markdown Libraries -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo">
+            <i class="ph ph-compass"></i>
+            <span>TravelMate AI</span>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="main-layout">
+        
+        <!-- Left Column: Input Forms -->
+        <section class="form-section">
+            <div class="card">
+                
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab-btn active" id="tab-trip"><i class="ph ph-map-trifold"></i> Plan Trip</button>
+                    <button class="tab-btn" id="tab-packing"><i class="ph ph-backpack"></i> Packing List</button>
+                </div>
+
+                <div id="trip-header">
+                    <h2>Plan Your Trip</h2>
+                    <p class="subtitle">Enter your details to generate a smart itinerary.</p>
+                </div>
+                
+                <!-- Form 1: Trip Planner (Visible by default) -->
+                <form id="tripForm">
+                    <div class="input-group">
+                        <label for="destination"><i class="ph ph-map-pin"></i> Destination</label>
+                        <input type="text" id="destination" placeholder="e.g., Goa, India" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="days"><i class="ph ph-calendar-blank"></i> Number of Days</label>
+                        <input type="number" id="days" placeholder="e.g., 3" min="1" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="budget"><i class="ph ph-wallet"></i> Budget (₹)</label>
+                        <input type="number" id="budget" placeholder="e.g., 15000" min="1" required>
+                    </div>
+
+                    <button type="submit" id="generateBtn">
+                        <i class="ph ph-airplane-tilt"></i> Generate Itinerary
+                    </button>
+                </form>
+
+                <!-- Form 2: Packing List (Hidden by default) -->
+                <form id="packingForm" style="display: none;">
+                    <div class="input-group">
+                        <label for="pack-destination"><i class="ph ph-map-pin"></i> Destination</label>
+                        <input type="text" id="pack-destination" placeholder="e.g., Manali" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="pack-season"><i class="ph ph-sun-dim"></i> Season/Weather</label>
+                        <input type="text" id="pack-season" placeholder="e.g., Winter" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="pack-days"><i class="ph ph-calendar-blank"></i> Number of Days</label>
+                        <input type="number" id="pack-days" placeholder="e.g., 5" min="1" required>
+                    </div>
+
+                    <button type="submit" id="packBtn">
+                        <i class="ph ph-backpack"></i> Generate Packing List
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Right Column: AI Output -->
+        <section class="result-section">
+            <div id="result" class="card result-card">
+                <div class="empty-state">
+                    <i class="ph ph-globe-hemisphere-west"></i>
+                    <h3>Your Journey Awaits</h3>
+                    <p>Select a tool on the left to generate your custom travel plans.</p>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- JavaScript logic -->
+    <script>
+        // --- Tab Switching Logic ---
+        const tabTrip = document.getElementById("tab-trip");
+        const tabPacking = document.getElementById("tab-packing");
+        const tripForm = document.getElementById("tripForm");
+        const packingForm = document.getElementById("packingForm");
+        const tripHeader = document.getElementById("trip-header");
+
+        tabTrip.addEventListener("click", () => {
+            tabTrip.classList.add("active");
+            tabPacking.classList.remove("active");
+            tripForm.style.display = "block";
+            tripHeader.style.display = "block";
+            packingForm.style.display = "none";
+        });
+
+        tabPacking.addEventListener("click", () => {
+            tabPacking.classList.add("active");
+            tabTrip.classList.remove("active");
+            packingForm.style.display = "block";
+            tripForm.style.display = "none";
+            tripHeader.style.display = "none";
+        });
+
+        // --- Trip Itinerary Submission Logic ---
+        document.getElementById("tripForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const destination = document.getElementById("destination").value;
+            const days = document.getElementById("days").value;
+            const budget = document.getElementById("budget").value;
+            const btn = document.getElementById("generateBtn");
+            const resultDiv = document.getElementById("result");
+
+            btn.innerHTML = `<i class="ph ph-spinner ph-spin"></i> Generating...`;
+            btn.disabled = true;
+            resultDiv.innerHTML = `
+                <div class="loading-state">
+                    <i class="ph ph-sparkle ph-spin"></i>
+                    <p>Consulting travel guides and formatting your itinerary...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch("/plan-trip", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        destination: destination,
+                        days: Number(days),
+                        budget: Number(budget)
+                    })
+                });
+
+                const data = await response.json();
+
+                resultDiv.innerHTML = `
+                    <div class="markdown-body">
+                        ${marked.parse(data.itinerary)}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">Error generating trip. Please try again.</p>`;
+            } finally {
+                btn.innerHTML = `<i class="ph ph-airplane-tilt"></i> Generate Itinerary`;
+                btn.disabled = false;
+            }
+        });
+
+        // --- Packing List Submission Logic ---
+        document.getElementById("packingForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const destination = document.getElementById("pack-destination").value;
+            const season = document.getElementById("pack-season").value;
+            const days = document.getElementById("pack-days").value;
+            const btn = document.getElementById("packBtn");
+            const resultDiv = document.getElementById("result");
+
+            btn.innerHTML = `<i class="ph ph-spinner ph-spin"></i> Packing...`;
+            btn.disabled = true;
+            resultDiv.innerHTML = `
+                <div class="loading-state">
+                    <i class="ph ph-backpack ph-spin"></i>
+                    <p>Folding shirts and checking the weather...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch("/packing-list", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        destination: destination,
+                        season: season,
+                        days: Number(days)
+                    })
+                });
+
+                const data = await response.json();
+
+                resultDiv.innerHTML = `
+                    <div class="markdown-body">
+                        <h2>🎒 Packing List for ${destination}</h2>
+                        ${marked.parse(data.packing_list)}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">Error generating packing list. Please try again.</p>`;
+            } finally {
+                btn.innerHTML = `<i class="ph ph-backpack"></i> Generate Packing List`;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
