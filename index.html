@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelMate AI</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="background"></div>
+
+<div class="container">
+
+    <h1>🌍 TravelMate AI</h1>
+
+    <p>Your Smart AI Travel Planner</p>
+
+    <form id="tripForm">
+
+        <label>📍 Destination</label>
+        <input
+            type="text"
+            id="destination"
+            placeholder="Goa"
+            required>
+
+       <label>🗓 Number of Days</label>
+        <input
+            type="number"
+            id="days"
+            placeholder="3"
+            required>
+
+       <label>💰 Budget (₹)</label>
+        <input
+            type="number"
+            id="budget"
+            placeholder="15000"
+            required>
+
+       <button type="submit">
+    ✈ Generate AI Trip
+</button>
+
+    </form>
+
+    <br>
+
+    <div id="result" class="result-box">
+    <div class="placeholder">
+        <h2>🌍 Your AI Trip Plan</h2>
+        <p>Your itinerary will appear here after you click <b>Generate Trip</b>.</p>
+    </div>
+</div>
+
+</div>
+
+<script>
+document.getElementById("tripForm").addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const destination = document.getElementById("destination").value;
+    const days = document.getElementById("days").value;
+    const budget = document.getElementById("budget").value;
+
+    document.getElementById("result").innerHTML = "<h3>Generating your trip...</h3>";
+
+    const response = await fetch("/plan-trip", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            destination: destination,
+            days: Number(days),
+            budget: Number(budget)
+        })
+    });
+
+    const data = await response.json();
+
+    document.getElementById("result").innerHTML = `
+        <h2>Your AI Itinerary</h2>
+        <pre>${data.itinerary}</pre>
+    `;
+});
+</script>
+</body>
+</html>
